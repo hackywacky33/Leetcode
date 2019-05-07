@@ -1,0 +1,43 @@
+// https://leetcode.com/problems/asteroid-collision/
+public class Solution {
+    public int[] AsteroidCollision(int[] asteroids) {
+        Stack<int> stack = new Stack<int>();
+        bool[] killed = new bool[asteroids.Length];
+        int count = 0;
+        
+        for (int i=asteroids.Length-1; i>=0; i--) {
+            if (asteroids[i] > 0) {
+                if (stack.Count == 0) {
+                    continue;
+                } else if (asteroids[i] > (asteroids[stack.Peek()] * -1)) {
+                    killed[stack.Peek()] = true;
+                    stack.Pop();
+                    count++;
+                    i++;
+                } else if (asteroids[i] == (asteroids[stack.Peek()] * -1)) {
+                    killed[stack.Peek()] = true;
+                    killed[i] = true;
+                    stack.Pop();
+                    count+=2;
+                } 
+                else {
+                    killed[i] = true;
+                    count++;
+                }
+            } else {
+                stack.Push(i);
+            }
+        }
+        
+        int[] result = new int[asteroids.Length - count];
+        int j = 0;
+        for(int i=0; i<asteroids.Length; i++) {
+            if (!killed[i]) {
+                result[j] = asteroids[i];
+                j++;
+            }    
+        }
+        
+        return result;        
+    }
+}
