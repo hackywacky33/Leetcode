@@ -1,0 +1,40 @@
+https://leetcode.com/problems/partition-labels/solution/
+public class Solution {
+    public IList<int> PartitionLabels(string S) {
+        List<int> result = new List<int>();
+        
+        if (string.IsNullOrEmpty(S)) {
+            result.Add(0);
+            return result;
+        }
+        
+        int[] pos = new int[26];
+        
+        for(int i=0; i<S.Length; i++) {
+            pos[S[i] - 'a'] = i;
+        }
+        
+        
+        int count = 0;
+        int lastOccr = pos[S[0] - 'a'];
+            
+        for(int i=0; i<S.Length; i++) {
+            count++;
+            
+            if (pos[S[i] - 'a'] > lastOccr) {
+                lastOccr = pos[S[i] - 'a'];
+            }
+            
+            if (i == lastOccr) {
+                result.Add(count);
+                count = 0;
+                
+                if (i + 1 < S.Length) {
+                    lastOccr = pos[S[i+1] - 'a'];
+                }
+            }
+        }
+        
+        return result;
+    }
+}
