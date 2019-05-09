@@ -1,0 +1,28 @@
+
+// https://leetcode.com/problems/convert-bst-to-greater-tree/submissions/
+
+public class Solution {
+    public TreeNode ConvertBST(TreeNode root) {
+        GreaterTree(root, 0);
+        
+        return root;
+    }
+    
+    private int GreaterTree(TreeNode root, int gts) {
+        int sumr = 0;
+        int suml = 0;
+        int oValue = 0;
+        
+        if (root == null) {
+            return 0;
+        }
+                              
+        sumr = GreaterTree(root.right, gts);       
+        suml = GreaterTree(root.left, sumr + root.val + gts);        
+        
+        oValue = root.val;
+        root.val += gts + sumr;
+        
+        return oValue + sumr + suml;
+    }
+}
