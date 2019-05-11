@@ -1,0 +1,95 @@
+//https://leetcode.com/problems/stamping-the-sequence/
+// NOT SOLVED BY SELF. 
+public class Solution {
+    public int[] MovesToStamp(string stamp, string target) {
+        Stack<int> stack = new Stack<int>();
+        Queue<int> queue = new Queue<int>();
+        Dictionary<int, bool> done = new Dictionary<int, bool>();
+        Dictionary<int, Node> map = new Dictionary<int, Node>();
+        
+        for(int i=0; i<=target.Length - stamp.Length; i++) {
+            Node node = new Node(i);
+            
+            for(int j=0; j<stamp.Length; j++) {
+                if (target[i+j] == stamp[j]) {
+                    node.match.Add(i+j, true);
+                } else {
+                    node.todo.Add(i+j, true);
+                }
+            }
+            
+            if (node.todo.Count == 0) {
+                for (int j=i; j<i+stamp.Length; j++) {
+                    if (!done.ContainsKey(j)) {
+                        done.Add(j, true);
+                        queue.Enqueue(j);
+                    }
+                }
+                
+                stack.Push(i);
+            }
+            
+            map.Add(i, node);
+        }
+        
+        while (queue.Count != 0)
+            {
+                int i = queue.Dequeue();
+                int start = Math.Max(0, i - stamp.Length + 1);
+                int end = Math.Min(target.Length - stamp.Length, i + stamp.Length - 1);
+
+                for (int j = start; j <= end; j++)
+                {
+                    Node node = map[j];
+                    if (node.todo.ContainsKey(i))
+                    {
+                        node.todo.Remove(i);
+
+                        if (node.todo.Count == 0)
+                        {
+                            foreach (var kvp in node.match)
+                            {
+                                if (!done.ContainsKey(kvp.Key))
+                                {
+                                    queue.Enqueue(kvp.Key);
+                                    done.Add(kvp.Key, true);
+                                }
+                            }
+
+                            stack.Push(j);
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < target.Length; i++)
+            {
+                if (!done.ContainsKey(i))
+                {
+                    return new int[0];
+                }
+            }
+
+            int[] result = new int[stack.Count];
+            int index = 0;
+
+            while(stack.Count > 0)
+            {
+                result[index++] = stack.Pop();
+            }
+
+            return result;
+    }    
+}
+
+public class Node {
+    public Dictionary<int, bool> todo;
+    public Dictionary<int, bool> match;
+    public int index;
+    
+    public Node(int index) {
+        this.index = index;
+        this.todo = new Dictionary<int, bool>();
+        this.match = new Dictionary<int, bool>();
+    }    
+}
